@@ -9,7 +9,7 @@ using VbaReader.Data;
 namespace VbaReader.OpenXml
 {
     /// <summary>
-    /// Decorator for VbaStorage exposing OpenXML-specific constructors
+    /// Class that exposes members from VbaStorage in a more user-friendly way
     /// </summary>
     public class VbProject : IDisposable
     {
