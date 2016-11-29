@@ -18,6 +18,19 @@ namespace VbaReader.Compression
         public DecompressionState()
         {
         }
+
+        /// <summary>
+        /// For compressing, where buffer is already filled with the fully decompressed data
+        /// </summary>
+        public DecompressionState(DecompressedBuffer buffer)
+        {
+            this.CompressionRecordEnd = 0; // unknown yet
+            this.CompressedCurrent = 0; // to start with
+            this.CompressedChunkStart = 0; // to start with
+            this.DecompressedCurrent = 0; // to start with
+            this.DecompressedBufferEnd = buffer.Data.Count(); // todo: or +1?
+            this.DecompressedChunkStart = 0; // to start with
+        }
     }
 
     public class Algorithms

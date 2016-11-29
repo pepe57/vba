@@ -12,7 +12,7 @@ namespace VbaReader.Compression
         protected readonly ushort Token;
 
         // Only usable when decompressing
-        protected struct UnpackedInfo
+        public struct UnpackedInfo
         {
             public ushort Offset;
             public ushort Length;
@@ -21,6 +21,16 @@ namespace VbaReader.Compression
         public CopyToken(XlBinaryReader Data)
         {
             this.Token = Data.ReadUInt16();
+        }
+
+        public CopyToken(ushort FromValue)
+        {
+            this.Token = FromValue;
+        }
+
+        public UInt16 AsUInt16()
+        {
+            return this.Token;
         }
 
         public override int GetSizeInBytes()
@@ -68,7 +78,7 @@ namespace VbaReader.Compression
 
         }
 
-        protected UnpackedInfo UnpackCopyToken(ushort Token, int DecompressedCurrent, int DecompressedChunkStart)
+        public static UnpackedInfo UnpackCopyToken(ushort Token, int DecompressedCurrent, int DecompressedChunkStart)
         {
             var help = CopyTokenHelp(DecompressedCurrent, DecompressedChunkStart);
 
@@ -80,8 +90,13 @@ namespace VbaReader.Compression
             return new UnpackedInfo() { Length = length, Offset = offset };
         }
 
+        public UnpackedInfo UnpackCopyToken(int DecompressedCurrent, int DecompressedChunkStart)
+        {
+            return UnpackCopyToken(this.AsUInt16(), DecompressedCurrent, DecompressedChunkStart);
+        }
 
-        private class CopyTokenHelpResult
+
+        public class CopyTokenHelpResult
         {
             public ushort LengthMask;
             public ushort OffsetMask;
@@ -90,7 +105,7 @@ namespace VbaReader.Compression
         }
 
         // page 69
-        private CopyTokenHelpResult CopyTokenHelp(int DecompressedCurrent, int DecompressedChunkStart)
+        public static CopyTokenHelpResult CopyTokenHelp(int DecompressedCurrent, int DecompressedChunkStart)
         {
             var difference = DecompressedCurrent - DecompressedChunkStart;
 

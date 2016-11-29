@@ -50,6 +50,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Compression\BaseCase.cs" />
+    <Compile Include="Compression\Case1.cs" />
+    <Compile Include="Compression\Case2.cs" />
+    <Compile Include="Compression\Case3.cs" />
     <Compile Include="Data\BaseCase.cs" />
     <Compile Include="Data\Case1.cs" />
     <Compile Include="Data\Case2.cs" />

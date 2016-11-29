@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace VbaReader.Compression
 {
+    // Buffer to write decompressed data to
     public class DecompressedBuffer
     {
-        protected List<Byte> _Data = new List<Byte>(10000);
+        protected List<Byte> _Data;
         public IEnumerable<Byte> Data
         {
             get
@@ -19,27 +20,16 @@ namespace VbaReader.Compression
 
         // State variables
 
-        /// <summary>
-        /// The location of the next byte in the DecompressedBuffer to be written by decompression or to be read by compression
-        /// </summary>
-        protected int DecompressedCurrent;
-
-        /// <summary>
-        /// The location of the byte after the last byte in the DecompressedBuffer
-        /// </summary>
-        protected int DecompressedBufferEnd;
-
-        /// <summary>
-        /// The location of the first byte of the DecompressionChunk within the Decompresseduffer
-        /// </summary>
-        protected int DecompressedChunkStart;
-
-
         // Methods
 
-        public DecompressedBuffer()
+        public DecompressedBuffer(int InitialSizeAllocation = 10000)
         {
+            this._Data = new List<Byte>(InitialSizeAllocation);
+        }
 
+        public DecompressedBuffer(byte[] UncompressedData)
+        {
+            this._Data = UncompressedData.ToList();
         }
 
         
@@ -48,7 +38,7 @@ namespace VbaReader.Compression
             this._Data.AddRange(Chunk.Data);
         }
 
-        public void SetByte(int index, Byte value)
+        public virtual void SetByte(int index, Byte value)
         {
             int C = Data.Count();
 

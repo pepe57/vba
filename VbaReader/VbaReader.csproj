@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="Compression\Algorithms.cs" />
     <Compile Include="Compression\BitHelper.cs" />
+    <Compile Include="Compression\CompressedBuffer.cs" />
     <Compile Include="Compression\CompressedChunk.cs" />
     <Compile Include="Compression\CompressedChunkData.cs" />
     <Compile Include="Compression\CompressedChunkHeader.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="Compression\CopyToken.cs" />
     <Compile Include="Compression\DecompressedChunk.cs" />
     <Compile Include="Compression\DecompressedBuffer.cs" />
+    <Compile Include="Compression\CompressionAlgorithm.cs" />
     <Compile Include="Compression\LiteralToken.cs" />
     <Compile Include="Compression\TokenSequence.cs" />
     <Compile Include="Compression\XlBinaryReader.cs" />

@@ -73,9 +73,11 @@ namespace VbaReader.Compression
             }
             else
             {
-                throw new Exception();
+                throw new FormatException("Signature byte was not 0x01");
             }
         }
+
+      
     }
 
 }

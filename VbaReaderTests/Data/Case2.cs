@@ -16,6 +16,12 @@ namespace VbaReaderTests.Data
             // ASCI: #aaabcdefaaaaghijaaaaaklaaamnopqaaaaaaaaaaaarstuvwxyzaaa
             this.UncompressedData = new byte[] { 0x23, 0x61, 0x61, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x61, 0x61, 0x61, 0x61, 0x67, 0x68, 0x69, 0x6a, 0x61, 0x61, 0x61, 0x61, 0x61, 0x6B, 0x6C, 0x61, 0x61, 0x61, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x61, 0x61, 0x61 };
 
+            // CAREFUL!
+            // When Compressing this.UncompressedData with the Compression algorithm, it will result in a different byte array
+            // than the below (this.CompressedData).
+            // however, when its result is de-compressed again, it will return the original UncompressedData.
+            // I suspect this is because there are potentially many ways to generate correct Compressed Data structures -
+            // e.g. when a CopyToken could copy its values from potentially different previous locations in the DecompressedBuffer that all return the same bytes
             this.CompressedData = new byte[] {
                 // CompressedContainer
                 // Signature byte = 0x01

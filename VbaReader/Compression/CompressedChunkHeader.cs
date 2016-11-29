@@ -8,26 +8,47 @@ namespace VbaReader.Compression
 {
     public class CompressedChunkHeader
     {
-        public readonly ushort CompressedChunkSize;
-        public readonly Byte CompressedChunkFlag;
-        protected readonly Byte CompressedChunkSignature;
+        public ushort CompressedChunkSize { get; private set; }
+        public Byte CompressedChunkFlag { get; private set; }
+        protected Byte CompressedChunkSignature { get; private set; }
 
-        protected readonly ushort Header; // 2-byte / unsigned 16 bit
+        protected ushort Header; // 2-byte / unsigned 16 bit
   
 
         public CompressedChunkHeader(XlBinaryReader Data)
         {
             // Algorithm as per page 60
-            this.Header = Data.ReadUInt16();
+            var Header = Data.ReadUInt16();
   
-            Console.WriteLine("CompressionChunkHeader Data Bytes: {0}  (uint16: {1})", this.Header.ToBitString(), this.Header);
-
-            this.CompressedChunkFlag = ExtractCompressionChunkFlag();
-            this.CompressedChunkSize = ExtractCompressionChunkSize();
-            this.CompressedChunkSignature = ExtractCompressionChunkSignature();
+            Console.WriteLine("CompressionChunkHeader Data Bytes: {0}  (uint16: {1})", Header.ToBitString(), Header);
+            SetFrom(Header);
+       
 
             Validate();
 
+        }
+
+        public CompressedChunkHeader(UInt16 FromValue)
+        {
+            SetFrom(FromValue);
+            /*
+            this.CompressedChunkSize = 0;
+            this.CompressedChunkFlag = 0;
+            this.CompressedChunkSignature = 0;
+            this.Header = 0;*/
+        }
+
+        public void SetFrom(UInt16 value)
+        {
+            this.CompressedChunkFlag = ExtractCompressionChunkFlag(value);
+            this.CompressedChunkSize = ExtractCompressionChunkSize(value);
+            this.CompressedChunkSignature = ExtractCompressionChunkSignature(value);
+            this.Header = value;
+        }
+
+        public UInt16 AsUInt16()
+        {
+            return this.Header;
         }
 
         protected void Validate()
@@ -75,15 +96,15 @@ namespace VbaReader.Compression
             }
         }
 
-        protected ushort ExtractCompressionChunkSize()
+        protected ushort ExtractCompressionChunkSize(UInt16 FromValue)
         {
             if (this.CompressedChunkFlag == (Byte)0x00)
                 return 4095;
 
             // Extract CompressionChunkSize
             // page 66
-            Console.WriteLine("Temp value: 0x{0:X}", this.Header);
-            var temp = (ushort)(this.Header & (ushort)0x0FFF);
+            Console.WriteLine("Temp value: 0x{0:X}", FromValue);
+            var temp = (ushort)(FromValue & (ushort)0x0FFF);
             temp = (ushort)(temp + (ushort)3);
             ushort size = temp;
 
@@ -96,12 +117,12 @@ namespace VbaReader.Compression
             return size;
         }
 
-        protected Byte ExtractCompressionChunkFlag()
+        protected Byte ExtractCompressionChunkFlag(UInt16 FromValue)
         {
             // Extract CompressionChunkFlag
             // page 67
             Console.WriteLine("Extracting CompressionChunkFlag from header {0}", this.Header);
-            var temp = this.Header & 0x8000;
+            var temp = FromValue & 0x8000;
             temp = temp >> 15;  // right shift 15 bits
             Byte result = (Byte)temp;
             Console.WriteLine("Extracted flag: {0} (cast to Byte: {1})", temp, result);
@@ -109,9 +130,9 @@ namespace VbaReader.Compression
             return result;
         }
 
-        protected Byte ExtractCompressionChunkSignature()
+        protected Byte ExtractCompressionChunkSignature(UInt16 FromValue)
         {
-            ushort signature = (ushort)(Header >> 12);
+            ushort signature = (ushort)(FromValue >> 12);
             signature = (ushort)(signature & 0x07);
 
             var result = (byte)signature;
