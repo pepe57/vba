@@ -8,15 +8,8 @@ using System.Threading.Tasks;
 namespace VbaReader.Compression
 {
     // my own naming
-    public class CompressionAlgorithm
+    public class XlCompressionAlgorithm
     {
-        //private IList<Byte> _CompressedData;
-
-        public CompressionAlgorithm()
-        {
-
-        }
-
         // Section 2.4.1.3.6
         // page 62
         /// <summary>
@@ -24,7 +17,7 @@ namespace VbaReader.Compression
         /// </summary>
         /// <param name="UncompressedData">Uncompressed raw data</param>
         /// <returns>A byte array containing the compressed data</returns>
-        public Byte[] Compress(byte[] UncompressedData)
+        public static Byte[] Compress(byte[] UncompressedData)
         {
             if (UncompressedData == null)
                 throw new ArgumentNullException("UncompressedData");
@@ -53,7 +46,7 @@ namespace VbaReader.Compression
         /// </summary>
         /// <param name="CompressedData">Byte array of the compressed data</param>
         /// <returns>A byte array containing the uncompressed data</returns>
-        public Byte[] Decompress(byte[] CompressedData)
+        public static Byte[] Decompress(byte[] CompressedData)
         {
             if (CompressedData == null)
                 throw new ArgumentNullException("CompressedData");
@@ -70,7 +63,7 @@ namespace VbaReader.Compression
 
         // 2.4.1.3.7 Compressing a DecompressedChunk
         // page 62
-        private void CompressDecompressedChunk(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state)
+        private static void CompressDecompressedChunk(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state)
         {
             var CompressedEnd = state.CompressedChunkStart + 4098;
             state.CompressedCurrent = state.CompressedChunkStart + 2;
@@ -110,7 +103,7 @@ namespace VbaReader.Compression
 
         // Section 2.4.1.3.13
         // page 66
-        private void PackCompressedChunkSize(byte[] Data, DecompressionState state, UInt16 size, CompressedChunkHeader header)
+        private static void PackCompressedChunkSize(byte[] Data, DecompressionState state, UInt16 size, CompressedChunkHeader header)
         {
             if (size > 4098 || size < 3)
                 throw new ArgumentOutOfRangeException("size", "Size must be between 3 - 4098");
@@ -123,7 +116,7 @@ namespace VbaReader.Compression
         }
 
         // Section 2.4.1.3.14
-        private void PackCompressedChunkSignature(byte[] Data, DecompressionState state, CompressedChunkHeader header)
+        private static void PackCompressedChunkSignature(byte[] Data, DecompressionState state, CompressedChunkHeader header)
         {
             UInt16 temp = (UInt16)(header.AsUInt16() & (ushort)0x8FFF);
             UInt16 result = (UInt16)(temp | (ushort)0x3000);
@@ -132,7 +125,7 @@ namespace VbaReader.Compression
         }
 
         // Section 2.4.1.3.16
-        private void PackCompressedChunkFlag(byte[] Data, DecompressionState state, UInt16 CompressedFlag, CompressedChunkHeader header)
+        private static void PackCompressedChunkFlag(byte[] Data, DecompressionState state, UInt16 CompressedFlag, CompressedChunkHeader header)
         {
             if (CompressedFlag != 0 && CompressedFlag != 1)
                 throw new ArgumentOutOfRangeException("CompressedFlag", "CompressedFlag must be 0 or 1");
@@ -147,7 +140,7 @@ namespace VbaReader.Compression
 
         // Section 2.4.1.3.8
         // page 63
-        private void CompressTokenSequence(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state, int CompressedEnd, int DecompressedEnd)
+        private static void CompressTokenSequence(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state, int CompressedEnd, int DecompressedEnd)
         {
             var FlagByteIndex = state.CompressedCurrent;
             Byte TokenFlags = 0x0; // 0b00000000
@@ -166,7 +159,7 @@ namespace VbaReader.Compression
 
         // section 2.4.1.3.18
         // page 67, 68
-        private Byte SetFlagBit(int Index, int Flag, Byte FlagByte)
+        private static Byte SetFlagBit(int Index, int Flag, Byte FlagByte)
         {
             var temp1 = Flag << Index;
             var temp2 = FlagByte & (~temp1);
@@ -177,7 +170,7 @@ namespace VbaReader.Compression
 
         // Section 2.4.1.3.9
         // page 64
-        private Byte CompressToken(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state, int CompressedEnd, int DecompressedEnd, int index, Byte Flags)
+        private static Byte CompressToken(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state, int CompressedEnd, int DecompressedEnd, int index, Byte Flags)
         {
             UInt16 Offset = 0;
 
@@ -256,7 +249,7 @@ namespace VbaReader.Compression
 
         // Section 2.4.1.3.19.3
         // page 69, 70
-        private CopyToken PackCopyToken(byte[] Data, DecompressionState state, UInt16 Offset, UInt16 Length)
+        private static CopyToken PackCopyToken(byte[] Data, DecompressionState state, UInt16 Offset, UInt16 Length)
         {
             var help = CopyToken.CopyTokenHelp(state.DecompressedCurrent, state.DecompressedChunkStart);
 
@@ -284,7 +277,7 @@ namespace VbaReader.Compression
 
         // Section 2.4.1.3.19.4
         // page 70
-        private MatchingResult Matching(byte[] Data, DecompressionState state, int DecompressedEnd)
+        private static MatchingResult Matching(byte[] Data, DecompressionState state, int DecompressedEnd)
         {
             int Candidate = state.DecompressedCurrent-1;
             UInt16 BestLength = 0;
@@ -333,7 +326,7 @@ namespace VbaReader.Compression
 
         // section 2.4.1.3.10
         // page 65
-        private void CompressRawChunk(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state, int LastByte)
+        private static void CompressRawChunk(byte[] Data, CompressedBuffer resultBuffer, DecompressionState state, int LastByte)
         {
             state.CompressedCurrent = state.CompressedChunkStart + 2;
             state.DecompressedCurrent = state.DecompressedChunkStart;
@@ -355,30 +348,5 @@ namespace VbaReader.Compression
                 ++state.CompressedCurrent;
             }
         }
-
-        /*
-        public void SetByte(int index, Byte value)
-        {
-            int C = _CompressedData.Count();
-
-            if (index < C)
-            {
-                this._CompressedData[index] = value;
-            }
-            else if (index == C)
-            {
-                this._CompressedData.Add(value);
-            }
-            else
-            {
-                // index > C
-                // add zero bytes temporarily
-                for (int i = C; i < index; i++)
-                    SetByte(i, 0x00);
-
-                SetByte(index, value);
-            }
-        }
-        */
     }
 }

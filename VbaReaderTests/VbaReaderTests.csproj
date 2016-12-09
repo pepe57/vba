@@ -50,6 +50,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ABNF\LibidReferenceTests.cs" />
+    <Compile Include="ABNF\ProjectReferenceTests.cs" />
     <Compile Include="Compression\BaseCase.cs" />
     <Compile Include="Compression\Case1.cs" />
     <Compile Include="Compression\Case2.cs" />

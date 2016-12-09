@@ -20,13 +20,7 @@ namespace VbaReaderTests.Decompression
         public void DecompressionTest()
         {
             Byte[] CompressedData = TestData.CompressedData;
-            var reader = new XlBinaryReader(ref CompressedData);
-            reader.OutputAllAsBinary();
-
-            var container = new CompressedContainer(reader);
-            var buffer = new DecompressedBuffer();
-            container.Decompress(buffer);
-            Byte[] uncompressed = buffer.GetData();
+            Byte[] uncompressed = XlCompressionAlgorithm.Decompress(CompressedData);
 
             bool success = Enumerable.SequenceEqual(uncompressed, TestData.UncompressedData);
 

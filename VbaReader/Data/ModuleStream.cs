@@ -14,11 +14,11 @@ namespace VbaReader.Data
     /// </summary>
     public class ModuleStream : DataBase
     {
-        protected readonly DirStream dirStream;
+        //protected readonly DirStream dirStream;
 
-        public readonly Byte[] PerformanceCache;
+        public Byte[] PerformanceCache { get; private set; }
 
-        public readonly Byte[] UncompressedSourceCode;
+        public Byte[] UncompressedSourceCode { get; private set; }
 
         protected readonly PROJECTINFORMATION ProjectInformation;
 
@@ -35,6 +35,31 @@ namespace VbaReader.Data
             container.Decompress(buffer);
             this.UncompressedSourceCode = buffer.GetData();
         }
+
+
+        internal ModuleStream(PROJECTINFORMATION ProjectInformation, MODULE module, string SourceCode)
+        {
+            this.ProjectInformation = ProjectInformation;
+            this.PerformanceCache = new Byte[] { };
+            SetUncompressetSourceCode(SourceCode, ProjectInformation.CodePageRecord);
+        }
+
+        private void SetUncompressetSourceCode(string code, Encoding encoding)
+        {
+            byte[] bytes = encoding.GetBytes(code);
+            this.UncompressedSourceCode = bytes;
+        }
+
+        internal void SetUncompressetSourceCode(string code, PROJECTCODEPAGE Codepage)
+        {
+            SetUncompressetSourceCode(code, Codepage.GetEncoding());
+        }
+
+        internal void SetUncompressetSourceCode(string code, PROJECTINFORMATION ProjectInformation)
+        {
+            SetUncompressetSourceCode(code, ProjectInformation.CodePageRecord);
+        }
+
 
         public string GetUncompressedSourceCodeAsString(Encoding encoding)
         {

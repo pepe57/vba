@@ -18,10 +18,6 @@ namespace VbaReader.Compression
             }
         }
 
-        // State variables
-
-        // Methods
-
         public DecompressedBuffer(int InitialSizeAllocation = 10000)
         {
             this._Data = new List<Byte>(InitialSizeAllocation);

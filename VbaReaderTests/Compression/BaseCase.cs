@@ -21,12 +21,12 @@ namespace VbaReaderTests.Compression
         {
             Byte[] UncompressedData = TestData.UncompressedData;
 
-            Byte[] CompressedData = new CompressionAlgorithm().Compress(UncompressedData);
+            Byte[] CompressedData = XlCompressionAlgorithm.Compress(UncompressedData);
 
             // Careful: ComressedData is NOT necessarily equal to TestData.CompressedData
             // See comment in Data.BaseCase.
             // So best we just un-compress the compressed data again, and see if the result is equal to UncompressedData
-            Byte[] UncompressedCompressedData = new CompressionAlgorithm().Decompress(CompressedData);
+            Byte[] UncompressedCompressedData = XlCompressionAlgorithm.Decompress(CompressedData);
 
             bool success = Enumerable.SequenceEqual(UncompressedData, UncompressedCompressedData);
 

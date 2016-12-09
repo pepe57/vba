@@ -25,7 +25,7 @@ namespace VbaReader.Data._PROJECTMODULES
         /// <summary>
         /// An unsigned integer that specifies the number of elements in Modules.
         /// </summary>
-        public readonly UInt16 Count;
+        public UInt16 Count { get; internal set; }
 
         /// <summary>
         /// A PROJECTCOOKIE Record (section 2.3.4.2.3.1).
